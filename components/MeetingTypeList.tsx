@@ -158,7 +158,7 @@ const MeetingTypeList = () => {
             <label className="text-base font-normal leading-[22.4px] text-sky-2">
               Meeting Link
             </label>
-            <p className="truncate text-sm font-bold max-sm:max-w-[320px] text-white">
+            <p className="max-sm:max-w-[320px] truncate text-sm font-bold text-white">
               {meetingLink}
             </p>
           </div>
