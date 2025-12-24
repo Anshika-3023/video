@@ -32,7 +32,8 @@ const PersonalRoom = () => {
   const client = useStreamVideoClient();
   const { toast } = useToast();
 
-  const meetingId = client ? generatePersonalMeetingId(client.user.id) : '';
+  const userId = localStorage.getItem('streamUserId');
+  const meetingId = userId ? generatePersonalMeetingId(userId) : '';
 
   const { call } = useGetCallById(meetingId);
 
