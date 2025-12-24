@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useGetCallById } from "@/hooks/useGetCallById";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { generatePersonalMeetingId, buildMeetingLink } from "@/lib/utils";
 
 const Table = ({
   title,
@@ -31,7 +32,7 @@ const PersonalRoom = () => {
   const client = useStreamVideoClient();
   const { toast } = useToast();
 
-  const meetingId = 'anonymous-user';
+  const meetingId = client ? generatePersonalMeetingId(client.user.id) : '';
 
   const { call } = useGetCallById(meetingId);
 
@@ -51,7 +52,7 @@ const PersonalRoom = () => {
     router.push(`/meeting/${meetingId}?personal=true`);
   };
 
-  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meetingId}?personal=true`;
+  const meetingLink = meetingId ? buildMeetingLink(meetingId) + '?personal=true' : '';
 
   return (
     <section className="flex size-full flex-col gap-10 text-white">

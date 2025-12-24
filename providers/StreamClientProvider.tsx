@@ -18,8 +18,12 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 
     const initializeClient = async () => {
       try {
-        // Generate a unique user ID for this session
-        const userId = crypto.randomUUID();
+        // Use a stable user ID stored in localStorage
+        let userId = localStorage.getItem('streamUserId');
+        if (!userId) {
+          userId = crypto.randomUUID();
+          localStorage.setItem('streamUserId', userId);
+        }
         console.log('Initializing client for userId:', userId);
 
         // Fetch token from API
