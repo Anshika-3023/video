@@ -63,16 +63,27 @@ const MeetingSetup = ({
     <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
       <h1 className="text-center text-2xl font-bold">Setup</h1>
       <VideoPreview />
-      <div className="flex h-16 items-center justify-center gap-3">
-        <label className="flex items-center justify-center gap-2 font-medium">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
+          <label className="text-base font-medium">Your Name</label>
           <input
-            type="checkbox"
-            checked={isMicCamToggled}
-            onChange={(e) => setIsMicCamToggled(e.target.checked)}
+            type="text"
+            placeholder="Enter your name"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            defaultValue={`User ${localStorage.getItem('streamUserId')?.slice(0, 8) || 'Anonymous'}`}
           />
-          Join with mic and camera off
-        </label>
-        <DeviceSettings />
+        </div>
+        <div className="flex h-16 items-center justify-center gap-3">
+          <label className="flex items-center justify-center gap-2 font-medium">
+            <input
+              type="checkbox"
+              checked={isMicCamToggled}
+              onChange={(e) => setIsMicCamToggled(e.target.checked)}
+            />
+            Join with mic and camera off
+          </label>
+          <DeviceSettings />
+        </div>
       </div>
       <Button
         className="rounded-md bg-green-500 px-4 py-2.5"

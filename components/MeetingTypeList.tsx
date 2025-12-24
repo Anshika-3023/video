@@ -146,8 +146,23 @@ const MeetingTypeList = () => {
           image={'/icons/checked.svg'}
           buttonIcon={meetingState === 'isMeetingCreated' ? undefined : "/icons/copy.svg"}
           className="text-center"
-          buttonText={meetingState === 'isMeetingCreated' ? "Join Meeting" : "Copy Meeting Link"}
-        />
+          buttonText={meetingState === 'isMeetingCreated' ? "Start Meeting" : "Copy Meeting Link"}
+          button2Text={meetingState === 'isMeetingCreated' ? "Copy Meeting Link" : undefined}
+          button2Click={() => {
+            navigator.clipboard.writeText(meetingLink);
+            toast({ title: 'Link Copied' });
+          }}
+          button2Icon="/icons/copy.svg"
+        >
+          <div className="flex flex-col gap-2.5">
+            <label className="text-base font-normal leading-[22.4px] text-sky-2">
+              Meeting Link
+            </label>
+            <p className="truncate text-sm font-bold max-sm:max-w-[320px] text-white">
+              {meetingLink}
+            </p>
+          </div>
+        </MeetingModal>
       )}
 
       <MeetingModal

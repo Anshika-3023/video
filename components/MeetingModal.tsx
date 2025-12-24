@@ -17,6 +17,9 @@ interface MeetingModalProps {
   image?: string;
   buttonClassName?: string;
   buttonIcon?: string;
+  button2Text?: string;
+  button2Click?: () => void;
+  button2Icon?: string;
 }
 
 const MeetingModal = ({
@@ -31,6 +34,9 @@ const MeetingModal = ({
   image,
   buttonClassName,
   buttonIcon,
+  button2Text,
+  button2Click,
+  button2Icon,
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -45,23 +51,44 @@ const MeetingModal = ({
             {title}
           </h1>
           {children}
-          <Button
-            className={
-              "bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-            }
-            onClick={handleClick}
-          >
-            {buttonIcon && (
-              <Image
-                src={buttonIcon}
-                alt="button icon"
-                width={13}
-                height={13}
-              />
-            )}{" "}
-            &nbsp;
-            {buttonText || "Schedule Meeting"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              className={
+                "bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+              }
+              onClick={handleClick}
+            >
+              {buttonIcon && (
+                <Image
+                  src={buttonIcon}
+                  alt="button icon"
+                  width={13}
+                  height={13}
+                />
+              )}{" "}
+              &nbsp;
+              {buttonText || "Schedule Meeting"}
+            </Button>
+            {button2Text && (
+              <Button
+                className={
+                  "bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+                }
+                onClick={button2Click}
+              >
+                {button2Icon && (
+                  <Image
+                    src={button2Icon}
+                    alt="button icon"
+                    width={13}
+                    height={13}
+                  />
+                )}{" "}
+                &nbsp;
+                {button2Text}
+              </Button>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
