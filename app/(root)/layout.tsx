@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 
-import StreamVideoProvider from '@/providers/StreamClientProvider';
+const StreamVideoProvider = dynamic(() => import('@/providers/StreamClientProvider'), { ssr: false });
 
 const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (

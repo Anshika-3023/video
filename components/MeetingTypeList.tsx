@@ -37,6 +37,7 @@ const MeetingTypeList = () => {
         return;
       }
       const id = crypto.randomUUID();
+      console.log('Creating call with id:', id);
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
       const startsAt =
@@ -50,22 +51,24 @@ const MeetingTypeList = () => {
           },
         },
       });
+      console.log('Call created, call.id:', call.id);
       setCallDetail(call);
       if (!values.description) {
+        console.log('Pushing to meeting:', `/meeting/${call.id}`);
         router.push(`/meeting/${call.id}`);
       }
       toast({
         title: 'Meeting Created',
       });
     } catch (error) {
-      console.error(error);
+      console.error('Error creating meeting:', error);
       toast({ title: 'Failed to create Meeting' });
     }
   };
 
   if (!client) return <Loader />;
 
-  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetail?.id}`;
+  const meetingLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/meeting/${callDetail?.id}`;
 
   return (
     <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -153,7 +156,13 @@ const MeetingTypeList = () => {
         title="Type the link here"
         className="text-center"
         buttonText="Join Meeting"
-        handleClick={() => router.push(values.link)}
+        handleClick={() => {
+          const url = new URL(values.link);
+          const pathParts = url.pathname.split('/');
+          const meetingId = pathParts[pathParts.length - 1];
+          console.log('Joining meeting with id:', meetingId);
+          router.push(`/meeting/${meetingId}`);
+        }}
       >
         <Input
           placeholder="Meeting link"
