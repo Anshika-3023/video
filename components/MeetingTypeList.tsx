@@ -12,7 +12,7 @@ import { Textarea } from './ui/textarea';
 import ReactDatePicker from 'react-datepicker';
 import { useToast } from './ui/use-toast';
 import { Input } from './ui/input';
-import { generateMeetingId, buildMeetingLink } from '@/lib/utils';
+import { generateMeetingId, buildMeetingLink, logger } from '@/lib/utils';
 
 const initialValues = {
   dateTime: new Date(),
@@ -27,14 +27,16 @@ const MeetingTypeList = () => {
   >(undefined);
   const [values, setValues] = useState(initialValues);
   const [callDetail, setCallDetail] = useState<Call>();
+  const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
   const client = useStreamVideoClient();
   const { toast } = useToast();
 
   const createMeeting = async () => {
-    if (!client) return;
+    if (!client || isCreatingMeeting) return;
+    setIsCreatingMeeting(true);
     try {
       const id = generateMeetingId();
-      console.log('Creating call with id:', id);
+      logger.log('Creating call with id:', id);
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
       const startsAt =
@@ -48,29 +50,39 @@ const MeetingTypeList = () => {
           },
         },
       });
-      console.log('Call created, call.id:', call.id);
+      logger.log('Call created, call.id:', call.id);
       setCallDetail(call);
       setMeetingState('isMeetingCreated');
       toast({
         title: 'Meeting Created',
       });
     } catch (error) {
-      console.error('Error creating meeting:', error);
+      logger.error('Error creating meeting:', error);
       toast({ title: 'Failed to create Meeting' });
+    } finally {
+      setIsCreatingMeeting(false);
     }
   };
 
   if (!client) return <Loader />;
 
-  const meetingLink = callDetail?.id ? buildMeetingLink(callDetail.id) : '';
+  const meetingLink = callDetail?.id ? (() => {
+    try {
+      return buildMeetingLink(callDetail.id);
+    } catch (error) {
+      console.error('Failed to build meeting link:', error);
+      return '';
+    }
+  })() : '';
 
   return (
     <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       <HomeCard
         img="/icons/add-meeting.svg"
         title="New Meeting"
-        description="Start an instant meeting"
+        description={isCreatingMeeting ? "Creating..." : "Start an instant meeting"}
         handleClick={createMeeting}
+        disabled={isCreatingMeeting}
       />
       <HomeCard
         img="/icons/join-meeting.svg"
@@ -149,10 +161,15 @@ const MeetingTypeList = () => {
           buttonText={meetingState === 'isMeetingCreated' ? "Start Meeting" : "Copy Meeting Link"}
           button2Text={meetingState === 'isMeetingCreated' ? "Copy Meeting Link" : undefined}
           button2Click={() => {
+            if (!meetingLink) {
+              toast({ title: 'Unable to generate meeting link. Please retry.' });
+              return;
+            }
             navigator.clipboard.writeText(meetingLink);
             toast({ title: 'Link Copied' });
           }}
           button2Icon="/icons/copy.svg"
+          button2Disabled={!meetingLink}
         >
           <div className="flex flex-col gap-2.5">
             <label className="text-base font-normal leading-[22.4px] text-sky-2">
@@ -175,7 +192,7 @@ const MeetingTypeList = () => {
           const url = new URL(values.link);
           const pathParts = url.pathname.split('/');
           const meetingId = pathParts[pathParts.length - 1];
-          console.log('Joining meeting with id:', meetingId);
+          logger.log('Joining meeting with id:', meetingId);
           router.push(`/meeting/${meetingId}`);
         }}
       >

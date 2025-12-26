@@ -20,6 +20,7 @@ interface MeetingModalProps {
   button2Text?: string;
   button2Click?: () => void;
   button2Icon?: string;
+  button2Disabled?: boolean;
 }
 
 const MeetingModal = ({
@@ -37,6 +38,7 @@ const MeetingModal = ({
   button2Text,
   button2Click,
   button2Icon,
+  button2Disabled,
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -75,6 +77,7 @@ const MeetingModal = ({
                   "bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
                 }
                 onClick={button2Click}
+                disabled={button2Disabled}
               >
                 {button2Icon && (
                   <Image

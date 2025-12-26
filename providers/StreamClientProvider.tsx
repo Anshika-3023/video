@@ -11,9 +11,15 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [videoClient, setVideoClient] = useState<StreamVideoClient>();
 
   useEffect(() => {
+    // Validate required environment variables
     if (!API_KEY) {
-      console.error('Stream API key is missing');
+      console.error('NEXT_PUBLIC_STREAM_API_KEY is not configured');
       return;
+    }
+
+    // NEXT_PUBLIC_APP_URL is optional on client - warn but don't fail
+    if (!process.env.NEXT_PUBLIC_APP_URL) {
+      console.warn('NEXT_PUBLIC_APP_URL is not configured - falling back to window.location.origin');
     }
 
     const initializeClient = async () => {

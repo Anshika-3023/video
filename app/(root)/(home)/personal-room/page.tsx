@@ -53,7 +53,14 @@ const PersonalRoom = () => {
     router.push(`/meeting/${meetingId}?personal=true`);
   };
 
-  const meetingLink = meetingId ? buildMeetingLink(meetingId) + '?personal=true' : '';
+  const meetingLink = meetingId ? (() => {
+    try {
+      return buildMeetingLink(meetingId) + '?personal=true';
+    } catch (error) {
+      console.error('Failed to build personal meeting link:', error);
+      return '';
+    }
+  })() : '';
 
   return (
     <section className="flex size-full flex-col gap-10 text-white">

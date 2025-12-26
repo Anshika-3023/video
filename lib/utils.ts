@@ -1,6 +1,25 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+// Environment-aware logging utility
+export const logger = {
+  log: (...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(...args);
+    }
+  },
+  error: (...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(...args);
+    }
+  },
+  warn: (...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(...args);
+    }
+  },
+};
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -25,13 +44,20 @@ export function generatePersonalMeetingId(userId: string): string {
 /**
  * Builds a shareable meeting link from the meeting ID.
  * The link directs users to the meeting page where they can join.
- * Returns empty string if meetingId is invalid to prevent broken links.
+ * Throws error if baseUrl cannot be resolved to prevent silent failures.
+ * Uses NEXT_PUBLIC_APP_URL for production deployment consistency.
  */
 export function buildMeetingLink(meetingId: string): string {
   if (!meetingId) {
-    console.error('Meeting ID is undefined, cannot build link');
-    return '';
+    throw new Error('Meeting ID is required to build meeting link');
   }
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+
+  // Use NEXT_PUBLIC_APP_URL for production, fallback to window.location.origin for local dev
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
+  if (!baseUrl) {
+    throw new Error('Base URL not available - configure NEXT_PUBLIC_APP_URL or ensure window.location is accessible');
+  }
+
   return `${baseUrl}/meeting/${meetingId}`;
 }

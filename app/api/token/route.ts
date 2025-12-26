@@ -1,9 +1,15 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
-const secret = process.env.STREAM_SECRET_KEY!;
+const secret = process.env.STREAM_API_SECRET;
 
 export async function POST(request: NextRequest) {
+  // Validate required environment variables
+  if (!secret) {
+    console.error('STREAM_API_SECRET is not configured');
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
   try {
     const { userId } = await request.json();
 
